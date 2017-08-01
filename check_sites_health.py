@@ -14,7 +14,7 @@ def load_urls(urls_file):
 
 def is_server_respond_with_200(url):
     try:
-        return requests.head(url, allow_redirects=True).status_code == requests.codes.ok
+        return requests.head(url, allow_redirects=True).ok
     except requests.exceptions.ConnectionError:
         return False
 
