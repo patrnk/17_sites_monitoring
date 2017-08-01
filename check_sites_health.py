@@ -19,11 +19,14 @@ def is_server_respond_with_200(url):
         return False
 
 
+def is_domain_registered(domain_name):
+    whois_info = whois(domain_name)
+    return whois_info.expiration_date is not None
+
+
 def is_domain_expiring_soon(domain_name):
     max_allowed_difference_in_days = 31
     whois_info = whois(domain_name)
-    if not whois_info.expiration_date:
-        return True
     difference_in_days = (whois_info.expiration_date[0] - datetime.today()).days
     return difference_in_days < max_allowed_difference_in_days
 
@@ -38,6 +41,9 @@ if __name__ == '__main__':
     args = parse_args(sys.argv[1:])
     urls = load_urls(args.url_file)
     for url in urls:
+        if not is_domain_registered(url):
+            print('(-) {} domain is not registered'.format(url))
+            continue
         if not is_server_respond_with_200(url):
             print('(!) {} appears to be unresponsive'.format(url))
         if is_domain_expiring_soon(url):
